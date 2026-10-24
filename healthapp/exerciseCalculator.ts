@@ -30,7 +30,7 @@ const calculateExercises = (dailyExercise: number[], target: number): TrainingRe
 	}
 
 	let desciption: Description = 'not really enough';
-	const window: number = target * 0.1;
+	const window: number = target * 0.15;
 	let rating = 1;
 	if (avg >= target - window && avg <= target + window) {
 		desciption = 'not too bad but could be better';
@@ -39,7 +39,7 @@ const calculateExercises = (dailyExercise: number[], target: number): TrainingRe
 		desciption = 'good to great';
 		rating = 3;
 	}
-	
+
 	const res: TrainingResult = {
 		periodLength: pl,
 		trainingDays: td,
@@ -53,4 +53,42 @@ const calculateExercises = (dailyExercise: number[], target: number): TrainingRe
 	return res;
 }
 
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2));
+//console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2));
+
+interface ExCalParams {
+	target: number;
+	dailyExercise: number[];
+}
+
+const parseArgumentsExCal = (args: string[]): ExCalParams => {
+	if (args.length < 4) throw new Error('Not enough arguments');
+	const dailyExercise: number[] = [];
+	if (!isNaN(Number(args[2])) && !isNaN(Number(args[3]))) {
+		for (let i = 3; i < args.length; i++) {
+			if (!isNaN(Number(args[i]))) {
+				dailyExercise.push(Number(args[i]))
+			} else {
+				throw new Error('Provided values were not numbers!');
+			}
+		}
+		return {
+			target: Number(args[2]),
+			dailyExercise: dailyExercise
+		}
+	} else {
+		throw new Error('Provided values were not numbers!');
+	}
+}
+
+try {
+	const { target, dailyExercise } = parseArgumentsExCal(process.argv);
+
+	console.log(calculateExercises(dailyExercise, target));
+
+} catch (error: unknown) {
+	let errorMessage = 'Something bad happened.'
+	if (error instanceof Error) {
+		errorMessage += ' Error: ' + error.message;
+	}
+	console.log(errorMessage);
+}
