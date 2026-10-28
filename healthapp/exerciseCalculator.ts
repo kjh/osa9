@@ -3,7 +3,7 @@ type Description =
 	'not too bad but could be better' |
 	'good to great';
 
-interface TrainingResult {
+export interface TrainingResult {
 	periodLength: number,
 	trainingDays: number,
 	success: boolean,
@@ -14,7 +14,7 @@ interface TrainingResult {
 }
 const calculateExercises = (dailyExercise: number[], target: number): TrainingResult => {
 	let sum: number = 0;
-	let avg: number = 0;
+	let avg: number;
 	let td: number = 0;
 	const pl: number = dailyExercise.length;
 
@@ -48,10 +48,10 @@ const calculateExercises = (dailyExercise: number[], target: number): TrainingRe
 		ratingDescription: desciption,
 		target: target,
 		average: avg
-	}
+	};
 
 	return res;
-}
+};
 
 //console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2));
 
@@ -66,7 +66,7 @@ const parseArgumentsExCal = (args: string[]): ExCalParams => {
 	if (!isNaN(Number(args[2])) && !isNaN(Number(args[3]))) {
 		for (let i = 3; i < args.length; i++) {
 			if (!isNaN(Number(args[i]))) {
-				dailyExercise.push(Number(args[i]))
+				dailyExercise.push(Number(args[i]));
 			} else {
 				throw new Error('Provided values were not numbers!');
 			}
@@ -74,21 +74,25 @@ const parseArgumentsExCal = (args: string[]): ExCalParams => {
 		return {
 			target: Number(args[2]),
 			dailyExercise: dailyExercise
-		}
+		};
 	} else {
 		throw new Error('Provided values were not numbers!');
 	}
-}
+};
+if (process.argv[1] === import.meta.filename) {
+	// do not run this code if module is imported
+	try {
+		const { target, dailyExercise } = parseArgumentsExCal(process.argv);
 
-try {
-	const { target, dailyExercise } = parseArgumentsExCal(process.argv);
+		console.log(calculateExercises(dailyExercise, target));
 
-	console.log(calculateExercises(dailyExercise, target));
-
-} catch (error: unknown) {
-	let errorMessage = 'Something bad happened.'
-	if (error instanceof Error) {
-		errorMessage += ' Error: ' + error.message;
+	} catch (error: unknown) {
+		let errorMessage = 'Something bad happened.';
+		if (error instanceof Error) {
+			errorMessage += ' Error: ' + error.message;
+		}
+		console.log(errorMessage);
 	}
-	console.log(errorMessage);
 }
+
+export default calculateExercises;

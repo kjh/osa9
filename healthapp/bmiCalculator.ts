@@ -19,9 +19,9 @@ type Bmi =
 	'Obese (Class II)' |
 	'Obese (Class III)';
 
-const calculateBmi = (cm: number, kg: number): Bmi => {
-	const m: number = (cm / 100);
-	const bmiIndex: number = kg / (m * m);
+const calculateBmi = (height: number, weight: number): Bmi => {
+	const m: number = (height / 100);
+	const bmiIndex: number = weight / (m * m);
 	switch (true) {
 		case bmiIndex < 16:
 			return 'Underweight (Severe thinness)';
@@ -40,13 +40,13 @@ const calculateBmi = (cm: number, kg: number): Bmi => {
 		default:
 			return 'Obese (Class III)';
 	}
-}
+};
 
 //console.log(calculateBmi(180, 74));
 
 interface BmiParams {
-	cm: number;
-	kg: number;
+	height: number;
+	weight: number;
 }
 
 const parseArguments = (args: string[]): BmiParams => {
@@ -55,24 +55,30 @@ const parseArguments = (args: string[]): BmiParams => {
 
 	if (!isNaN(Number(args[2])) && !isNaN(Number(args[3]))) {
 		return {
-			cm: Number(args[2]),
-			kg: Number(args[3])
-		}
+			height: Number(args[2]),
+			weight: Number(args[3])
+		};
 	} else {
 		throw new Error('Provided values were not numbers!');
 	}
-}
+};
 
-try {
-	const { cm, kg } = parseArguments(process.argv);
+if (process.argv[1] === import.meta.filename) {
+	// do not run this code if module is imported
 
-	console.log(calculateBmi(cm, kg));
+	try {
+		const { height, weight } = parseArguments(process.argv);
 
-} catch (error: unknown) {
-	let errorMessage = 'Something bad happened.'
-	if (error instanceof Error) {
-		errorMessage += ' Error: ' + error.message;
+		console.log(calculateBmi(height, weight));
+
+	} catch (error: unknown) {
+		let errorMessage = 'Something bad happened.';
+		if (error instanceof Error) {
+			errorMessage += ' Error: ' + error.message;
+		}
+		console.log(errorMessage);
 	}
-	console.log(errorMessage);
 }
+
+export default calculateBmi;
 
